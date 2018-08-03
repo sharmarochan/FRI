@@ -96,8 +96,8 @@ for imagePath in imagePaths:
 		
 	labels.append(label)
 	print("image count:",count, par1, label)
-	if count == 500:
-		break
+	# if count == 500:
+	# 	break
 
 
 
