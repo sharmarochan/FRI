@@ -50,60 +50,54 @@ random.shuffle(imagePaths)
 # loop over the input images
 count = 0
 for imagePath in imagePaths:
+	count = count+1
+	par1 = imagePath.split(os.path.sep)[-2]
+	# cv2.imshow('image',image)
+	# cv2.waitKey(0)
+	image = cv2.imread(imagePath)
 
-	if imagePath.endswith('.jpg'):
-		# load the image, pre-process it, and store it in the data list
-		# print(imagePath)
-		count = count+1
-		par1 = imagePath.split(os.path.sep)[-2]
-		# cv2.imshow('image',image)
-		# cv2.waitKey(0)
-		image = cv2.imread(imagePath)
-
-		try:
-			image = cv2.resize(image, (256, 256))
-		except:
-			continue
-
-		image = img_to_array(image)
-		# print (image)
-		data.append(image)
-
-		# extract the class label from the image path and update the
-		# labels list
-		# par1, par2, par3, par4, par5= imagePath.rsplit('_', 4)
-		# print('par1', par1)
-
-		if par1 == "Barking_deer":
-			label = 1
-		if par1 == "Porcupine":
-			label = 2
-		if par1 == "Gaur":
-			label = 3
-		if par1 == "Sambar":
-			label = 4
-		if par1 == "Elephant":
-			label = 5
-		if par1 == "Chital":
-			label = 6
-		if par1 == "Wild_pig":
-			label = 7
-		if par1 == "Jungle_Cat":
-			label = 8
-		if par1 == "Hare":
-			label = 9
-		if par1 == "sloth_bear":
-			label = 10
-		if par1 == "jackal":
-			label = 11
-			
-		labels.append(label)
-		print("image count:",count, par1, label)
-		# if count == 10:
-		# 	break
-
-	else:
+	try:
+		image = cv2.resize(image, (256, 256))
+	except:
 		continue
+
+	image = img_to_array(image)
+	# print (image)
+	data.append(image)
+
+	# extract the class label from the image path and update the
+	# labels list
+	# par1, par2, par3, par4, par5= imagePath.rsplit('_', 4)
+	# print('par1', par1)
+
+	if par1 == "jackal":
+		label = 0
+	if par1 == "Barking_deer":
+		label = 1
+	if par1 == "Porcupine":
+		label = 2
+	if par1 == "Gaur":
+		label = 3
+	if par1 == "Sambar":
+		label = 4
+	if par1 == "Elephant":
+		label = 5
+	if par1 == "Chital":
+		label = 6
+	if par1 == "Wild_pig":
+		label = 7
+	if par1 == "Jungle_Cat":
+		label = 8
+	if par1 == "Hare":
+		label = 9
+	if par1 == "sloth_bear":
+		label = 10
+	
+		
+	labels.append(label)
+	print("image count:",count, par1, label)
+	if count == 500:
+		break
 
 
 
@@ -139,7 +133,7 @@ aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 print("[INFO] compiling model...")
 model = LeNet.build(width=256, height=256, depth=3, classes=11)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model.compile(loss="categorical_crossentropys", optimizer=opt, metrics=["accuracy"])
+model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 
 # train the network
 print("[INFO] training network...")
