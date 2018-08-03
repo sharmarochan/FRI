@@ -19,6 +19,7 @@ import argparse
 import random
 import cv2
 import os
+from tempfile import TemporaryFile
 
 # construct the argument parse and parse the arguments
 # ap = argparse.ArgumentParser()
@@ -49,24 +50,28 @@ random.shuffle(imagePaths)
 # loop over the input images
 count = 0
 for imagePath in imagePaths:
-	if not imagePath.startswith('.') and imagePath != 'Thumbs.db' or imagePath != '.DS_Store':
+
+	if imagePath.endswith('.jpg'):
 		# load the image, pre-process it, and store it in the data list
 		# print(imagePath)
 		count = count+1
-
+		par1 = imagePath.split(os.path.sep)[-2]
 		# cv2.imshow('image',image)
 		# cv2.waitKey(0)
 		image = cv2.imread(imagePath)
-		image = cv2.resize(image, (256, 256))
+
+		try:
+			image = cv2.resize(image, (256, 256))
+		except:
+			continue
+
 		image = img_to_array(image)
 		# print (image)
 		data.append(image)
 
 		# extract the class label from the image path and update the
 		# labels list
-
 		# par1, par2, par3, par4, par5= imagePath.rsplit('_', 4)
-		par1 = imagePath.split(os.path.sep)[-2]
 		# print('par1', par1)
 
 		if par1 == "Barking_deer":
@@ -91,27 +96,39 @@ for imagePath in imagePaths:
 			label = 10
 		if par1 == "jackal":
 			label = 11
-		# print(label)
+			
 		labels.append(label)
-
-
 		print("image count:",count, par1, label)
+		# if count == 10:
+		# 	break
+
+	else:
+		continue
 
 
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
+
+outfile = TemporaryFile()
+np.save(outfile, data)
 # print(data)
 labels = np.array(labels)
 
+outfile2 = TemporaryFile()
+np.save(outfile2, labels)
+
+
 # partition the data into training and testing splits using 75% of
 # the data for training and the remaining 25% for testing
+print("train_test_split")
+
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
 
 
 # convert the labels from integers to vectors
-trainY = to_categorical(trainY, num_classes = 9)
-testY = to_categorical(testY, num_classes = 9)
+trainY = to_categorical(trainY, num_classes = 11)
+testY = to_categorical(testY, num_classes = 11)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
@@ -120,7 +137,7 @@ aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 
 # initialize the model
 print("[INFO] compiling model...")
-model = LeNet.build(width=256, height=256, depth=3, classes=9)
+model = LeNet.build(width=256, height=256, depth=3, classes=11)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="categorical_crossentropys", optimizer=opt, metrics=["accuracy"])
 
@@ -132,7 +149,7 @@ H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 
 # save the model to disk
 print("[INFO] serializing network...")
-model.save(args["model"])
+model.save('animal.model')
 
 # plot the training loss and accuracy
 plt.style.use("ggplot")
