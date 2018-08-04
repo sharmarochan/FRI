@@ -10,12 +10,11 @@ import imutils
 import cv2
 
 # construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-m", "--model", required=True,
-	help="path to trained model model")
-ap.add_argument("-i", "--image", required=True,
-	help="path to input image")
-args = vars(ap.parse_args())
+# ap = argparse.ArgumentParser()
+
+# ap.add_argument("-m", "--model", required=True, help="path to trained model model")
+# ap.add_argument("-i", "--image", required=True, help="path to input image")
+# args = vars(ap.parse_args())
 
 # load the image
 image = cv2.imread(args["image"])
@@ -29,14 +28,28 @@ image = np.expand_dims(image, axis=0)
 
 # load the trained convolutional neural network
 print("[INFO] loading network...")
-model = load_model(args["model"])
+model = load_model('animal.model')
 
 # classify the input image
-(notSanta, santa) = model.predict(image)[0]
+(Barking_deer, Chital, Elephant) = model.predict(image)[0]
 
 # build the label
-label = "Santa" if santa > notSanta else "Not Santa"
-proba = santa if santa > notSanta else notSanta
+if (Barking_deer > Chital and  Barking_deer > Elephant):
+	label = "Barking_deer" 
+	proba = Barking_deer
+
+elif (Chital > Barking_deer and  Chital > Elephant):
+	label = "Chital" 
+	proba = Chital
+
+elif (Elephant > Barking_deer and  Elephant > Chital):
+	label = "Elephant" 
+	proba = Elephant
+
+else:
+
+	print("None of Barking_deer, Elephant,Chital")
+
 label = "{}: {:.2f}%".format(label, proba * 100)
 
 # draw the label on the image
