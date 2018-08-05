@@ -8,7 +8,8 @@ import numpy as np
 import argparse
 import imutils
 import cv2
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # construct the argument parse and parse the arguments
 # ap = argparse.ArgumentParser()
 
@@ -17,7 +18,7 @@ import cv2
 # args = vars(ap.parse_args())
 
 # load the image
-image = cv2.imread(args["image"])
+image = cv2.imread("/Users/rochansharma/Desktop/extracted_files/model/test_images/Elephant_agu_0_0_115.jpg")
 orig = image.copy()
 
 # pre-process the image for classification
@@ -31,32 +32,46 @@ print("[INFO] loading network...")
 model = load_model('animal.model')
 
 # classify the input image
-(Barking_deer, Chital, Elephant) = model.predict(image)[0]
+# (Barking_deer, Chital, Elephant) = model.predict(image)[0]
+proba = model.predict(image)
+max_proba = np.max(proba)
+
+# label, = np.where(proba == max_proba)
+label = str(np.argmax(proba))
+
+print ("proba , label: ",max_proba)
+
 
 # build the label
-if (Barking_deer > Chital and  Barking_deer > Elephant):
+'''
+if (prediction > Chital and  prediction > Elephant):
 	label = "Barking_deer" 
 	proba = Barking_deer
 
-elif (Chital > Barking_deer and  Chital > Elephant):
+elif (prediction > Barking_deer and  prediction > Elephant):
 	label = "Chital" 
 	proba = Chital
 
-elif (Elephant > Barking_deer and  Elephant > Chital):
+elif (prediction > Barking_deer and  prediction > Chital):
 	label = "Elephant" 
 	proba = Elephant
 
 else:
-
 	print("None of Barking_deer, Elephant,Chital")
+'''
+print("proba", proba)
+# label = "{}: {:.2f}%".format(label, proba * 100)
 
-label = "{}: {:.2f}%".format(label, proba * 100)
+
 
 # draw the label on the image
 output = imutils.resize(orig, width=400)
-cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
-	0.7, (0, 255, 0), 2)
+cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+
 
 # show the output image
 cv2.imshow("Output", output)
 cv2.waitKey(0)
+
+
+
