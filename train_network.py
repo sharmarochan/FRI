@@ -31,7 +31,7 @@ from tempfile import TemporaryFile
 # initialize the number of epochs to train for, initia learning rate,
 # and batch size
 EPOCHS = 25
-INIT_LR = 1e-3
+INIT_LR = 1e-3  #(power(10,-3))
 BS = 32
 
 # initialize the data and labels
@@ -44,12 +44,13 @@ labels = []
 imagePaths = sorted(list(paths.list_images("images")))
 random.seed(42)
 random.shuffle(imagePaths)
+print(len(imagePaths))
 
 # loop over the input images
 count = 0
 for imagePath in imagePaths:
 	count = count+1
-	label = imagePath.split(os.path.sep)[-2]
+	par1 = imagePath.split(os.path.sep)[-2]
 	image = cv2.imread(imagePath)
 
 	try:
@@ -90,9 +91,6 @@ for imagePath in imagePaths:
 
 	# if count == 500:
 	# 	break
-	
-	labels.append(label)
-	print("image count:", count, imagePath, label)
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -136,7 +134,7 @@ plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
 plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
 plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
 plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
-plt.title("Training Loss and Accuracy on Santa/Not Santa")
+plt.title("Training Loss and Accuracy on Animal Classification")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
