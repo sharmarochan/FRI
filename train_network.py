@@ -49,9 +49,7 @@ random.shuffle(imagePaths)
 count = 0
 for imagePath in imagePaths:
 	count = count+1
-	par1 = imagePath.split(os.path.sep)[-2]
-	# cv2.imshow('image',image)
-	# cv2.waitKey(0)
+	label = imagePath.split(os.path.sep)[-2]
 	image = cv2.imread(imagePath)
 
 	try:
@@ -61,7 +59,6 @@ for imagePath in imagePaths:
 
 	image = img_to_array(image)
 	data.append(image)
-
 	# extract the class label from the image path and update the
 	# labels list
 
@@ -93,6 +90,9 @@ for imagePath in imagePaths:
 
 	# if count == 500:
 	# 	break
+	
+	labels.append(label)
+	print("image count:", count, imagePath, label)
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -100,7 +100,7 @@ data = np.array(data, dtype="float") / 255.0
 # partition the data into training and testing splits using 75% of
 # the data for training and the remaining 25% for testing
 print("train_test_split...")
-(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
+(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, random_state=42)
 
 
 # convert the labels from integers to vectors
