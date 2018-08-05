@@ -40,8 +40,6 @@ data = []
 labels = []
 
 # grab the image paths and randomly shuffle them
-# path_dir = "/Users/rochansharma/Desktop/extracted_files/model/images/"
-# imagePaths = os.listdir(path_dir)
 
 imagePaths = sorted(list(paths.list_images("images")))
 random.seed(42)
@@ -62,13 +60,10 @@ for imagePath in imagePaths:
 		continue
 
 	image = img_to_array(image)
-	# print (image)
 	data.append(image)
 
 	# extract the class label from the image path and update the
 	# labels list
-	# par1, par2, par3, par4, par5= imagePath.rsplit('_', 4)
-	# print('par1', par1)
 
 	if par1 == "jackal":
 		label = 0
@@ -93,30 +88,18 @@ for imagePath in imagePaths:
 	if par1 == "sloth_bear":
 		label = 10
 	
-		
 	labels.append(label)
-	print("image count:",count, par1, label)
+	print("image count:", count, par1, label)
+
 	# if count == 500:
 	# 	break
-
-
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 
-outfile = TemporaryFile()
-np.save(outfile, data)
-# print(data)
-labels = np.array(labels)
-
-outfile2 = TemporaryFile()
-np.save(outfile2, labels)
-
-
 # partition the data into training and testing splits using 75% of
 # the data for training and the remaining 25% for testing
-print("train_test_split")
-
+print("train_test_split...")
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
 
 
@@ -157,5 +140,5 @@ plt.title("Training Loss and Accuracy on Santa/Not Santa")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig(args["plot"])
+plt.savefig('Animal_plot')
 
