@@ -40,8 +40,6 @@ data = []
 labels = []
 
 # grab the image paths and randomly shuffle them
-# path_dir = "/Users/rochansharma/Desktop/extracted_files/model/images/"
-# imagePaths = os.listdir(path_dir)
 
 imagePaths = sorted(list(paths.list_images("images")))
 random.seed(42)
@@ -51,7 +49,7 @@ random.shuffle(imagePaths)
 count = 0
 for imagePath in imagePaths:
 	count = count+1
-	par1 = imagePath.split(os.path.sep)[-2]
+	label = imagePath.split(os.path.sep)[-2]
 	# cv2.imshow('image',image)
 	# cv2.waitKey(0)
 	image = cv2.imread(imagePath)
@@ -62,44 +60,10 @@ for imagePath in imagePaths:
 		continue
 
 	image = img_to_array(image)
-	# print (image)
 	data.append(image)
-
-	# extract the class label from the image path and update the
-	# labels list
-	# par1, par2, par3, par4, par5= imagePath.rsplit('_', 4)
-	# print('par1', par1)
-
-	if par1 == "jackal":
-		label = 0
-	if par1 == "Barking_deer":
-		label = 1
-	if par1 == "Porcupine":
-		label = 2
-	if par1 == "Gaur":
-		label = 3
-	if par1 == "Sambar":
-		label = 4
-	if par1 == "Elephant":
-		label = 5
-	if par1 == "Chital":
-		label = 6
-	if par1 == "Wild_pig":
-		label = 7
-	if par1 == "Jungle_Cat":
-		label = 8
-	if par1 == "Hare":
-		label = 9
-	if par1 == "sloth_bear":
-		label = 10
 	
-		
 	labels.append(label)
-	print("image count:",count, par1, label)
-	# if count == 500:
-	# 	break
-
-
+	print("image count:", count, imagePath, label)
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -115,14 +79,13 @@ np.save(outfile2, labels)
 
 # partition the data into training and testing splits using 75% of
 # the data for training and the remaining 25% for testing
-print("train_test_split")
-
+print("train_test_split...")
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
 
 
 # convert the labels from integers to vectors
-trainY = to_categorical(trainY, num_classes = 11)
-testY = to_categorical(testY, num_classes = 11)
+trainY = to_categorical(trainY, num_classes = 3)
+testY = to_categorical(testY, num_classes = 3)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
@@ -131,7 +94,7 @@ aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 
 # initialize the model
 print("[INFO] compiling model...")
-model = LeNet.build(width=256, height=256, depth=3, classes=11)
+model = LeNet.build(width=256, height=256, depth=3, classes=3)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 
@@ -146,7 +109,7 @@ print("[INFO] serializing network...")
 model.save('animal.model')
 
 # plot the training loss and accuracy
-plt.style.use("ggplot")
+plt.style.use("Animal")
 plt.figure()
 N = EPOCHS
 plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
@@ -157,5 +120,5 @@ plt.title("Training Loss and Accuracy on Santa/Not Santa")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig(args["plot"])
+plt.savefig('plot')
 
