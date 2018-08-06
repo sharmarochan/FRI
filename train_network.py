@@ -44,7 +44,7 @@ labels = []
 imagePaths = sorted(list(paths.list_images("images")))
 random.seed(42)
 random.shuffle(imagePaths)
-print(len(imagePaths))
+# print(len(imagePaths))
 
 # loop over the input images
 count = 0
