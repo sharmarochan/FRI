@@ -35,31 +35,12 @@ model = load_model('animal.model')
 # (Barking_deer, Chital, Elephant) = model.predict(image)[0]
 proba = model.predict(image)
 max_proba = np.max(proba)
-
-# label, = np.where(proba == max_proba)
 label = str(np.argmax(proba))
 
-print ("proba , label: ",max_proba)
-
-
 # build the label
-'''
-if (prediction > Chital and  prediction > Elephant):
-	label = "Barking_deer" 
-	proba = Barking_deer
+print ("proba , label: ", max_proba)
 
-elif (prediction > Barking_deer and  prediction > Elephant):
-	label = "Chital" 
-	proba = Chital
-
-elif (prediction > Barking_deer and  prediction > Chital):
-	label = "Elephant" 
-	proba = Elephant
-
-else:
-	print("None of Barking_deer, Elephant,Chital")
-'''
-print("proba", proba)
+print("proba", (proba * 100))
 # label = "{}: {:.2f}%".format(label, proba * 100)
 
 
